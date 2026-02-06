@@ -39,6 +39,10 @@ class FoodPost(db.Model):
     donor_id = db.Column(db.Integer)
     price = db.Column(db.Integer)
     receiver_id = db.Column(db.Integer)
+    # Create database tables automatically (for Render)
+with app.app_context():
+    db.create_all()
+
 
 
 # ---------------- HOME ---------------- #
