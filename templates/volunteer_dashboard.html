@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Volunteer Dashboard | AnnSeva</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="default-bg">
+
+<div class="card">
+    <h1>🤝 Volunteer Pickup Dashboard</h1>
+
+    {% for post in posts %}
+    <div class="food-card">
+
+        <div class="food-info">
+            <h2>{{ post.food_name }}</h2>
+            <p><b>Quantity:</b> {{ post.quantity }} plates</p>
+            <p><b>Location:</b> {{ post.location }}</p>
+            <p><b>Status:</b> {{ post.status }}</p>
+        </div>
+
+        <div class="food-action">
+            <a href="{{ post.location }}" target="_blank" class="map-btn">📍 Map</a>
+
+            {% if post.status == "Pending" %}
+                <a href="/accept/{{ post.id }}" class="accept-btn">✅ Accept</a>
+
+            {% elif post.status == "Accepted" %}
+                <a href="/collected/{{ post.id }}" class="collect-btn">📦 Collected</a>
+
+            {% else %}
+                <span class="done-label">✔ Completed</span>
+            {% endif %}
+        </div>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

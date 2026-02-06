@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Food | AnnSeva</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="default-bg">
+
+<div class="card">
+    <h1>🍲 Add Food Details</h1>
+
+    <form method="POST">
+
+        <!-- Veg / Non Veg -->
+        <select id="type" onchange="showMenu()" required>
+            <option value="">Select Food Type</option>
+            <option value="veg">Veg</option>
+            <option value="nonveg">Non-Veg</option>
+        </select>
+
+        <!-- Menu -->
+        <select id="menu" name="food_name" required></select>
+
+        <!-- Quantity -->
+        <input type="number" name="quantity" placeholder="Quantity (plates)" required>
+
+        <!-- Manual Location -->
+        <textarea name="location" rows="3"
+        placeholder="Enter Pickup Address with Landmark, Area, City"
+        required></textarea>
+
+        <!-- Food Image Preview -->
+        <img id="foodImg"
+     style="width:100%;max-height:180px;object-fit:cover;
+     border-radius:10px;margin:10px 0;display:none;">
+
+
+        <button class="btn">Post Food</button>
+    </form>
+</div>
+
+<script>
+/* ------------------ MENU DATA ------------------ */
+const vegItems = {
+"Paneer Butter Masala":"https://images.unsplash.com/photo-1604908554167-6a6b7e2c6e1b",
+"Veg Biryani":"https://images.unsplash.com/photo-1589302168068-964664d93dc0",
+"Dal Tadka":"https://images.unsplash.com/photo-1625944232762-1c0b9d4e2a90",
+"Chole Bhature":"https://images.unsplash.com/photo-1626776876724-4a0c2f9f1b9e",
+"Rajma Chawal":"https://images.unsplash.com/photo-1627308595229-7830a5c91f9f",
+"Palak Paneer":"https://images.unsplash.com/photo-1631452180519-c014fe946bc7",
+"Aloo Gobi":"https://images.unsplash.com/photo-1617196038435-3f1b3a9b8c3a",
+"Veg Pulao":"https://images.unsplash.com/photo-1600628422019-6c9c8c1c4a9b",
+"Mix Veg Curry":"https://images.unsplash.com/photo-1596797038530-2c107aa9f4f2",
+"Kadai Paneer":"https://images.unsplash.com/photo-1633945274405-b6c8066e64f3",
+"Veg Fried Rice":"https://images.unsplash.com/photo-1585032226651-759b368d7246",
+"Matar Paneer":"https://images.unsplash.com/photo-1630409351217-7f1b8a3b3c8d",
+"Bhindi Masala":"https://images.unsplash.com/photo-1601050690597-df0568f70950",
+"Malai Kofta":"https://images.unsplash.com/photo-1625943555410-1f2b4a8b6a59",
+"Tandoori Roti":"https://images.unsplash.com/photo-1598514982451-8d9d2e0e2c7a",
+"Vegetable Curry":"https://images.unsplash.com/photo-1585937421612-70a008356fbe",
+"Sambar Rice":"https://images.unsplash.com/photo-1626500154749-11fbcf6c0f06",
+"Curd Rice":"https://images.unsplash.com/photo-1604908177268-0c0c1b0a8d90",
+"Lemon Rice":"https://images.unsplash.com/photo-1626500154786-3e5b1a2c6c8f",
+"Tomato Rice":"https://images.unsplash.com/photo-1626500154638-9c2b2c7a4d1a"
+};
+
+const nonVegItems = {
+"Chicken Biryani":"https://images.unsplash.com/photo-1604908176997-125f25cc6f3d",
+"Chicken Curry":"https://images.unsplash.com/photo-1605478909918-5d8b6f7d0e6a",
+"Egg Curry":"https://images.unsplash.com/photo-1617191517004-8c6d8e6e2b9a",
+"Butter Chicken":"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398",
+"Chicken Tikka":"https://images.unsplash.com/photo-1601050690117-9c8e9b6a8a5a",
+"Mutton Curry":"https://images.unsplash.com/photo-1625943555410-1f2b4a8b6a59",
+"Fish Curry":"https://images.unsplash.com/photo-1613141412501-9012977f1969",
+"Prawn Masala":"https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec",
+"Chicken Fried Rice":"https://images.unsplash.com/photo-1585032226651-759b368d7246",
+"Egg Fried Rice":"https://images.unsplash.com/photo-1604908177268-0c0c1b0a8d90",
+"Chicken Noodles":"https://images.unsplash.com/photo-1589308078056-fb1a4b1f4c3a",
+"Mutton Biryani":"https://images.unsplash.com/photo-1626500154749-11fbcf6c0f06",
+"Fish Fry":"https://images.unsplash.com/photo-1626082927408-3a3e9f1a9c6b",
+"Chicken Korma":"https://images.unsplash.com/photo-1603894584373-5ac82b2ae398",
+"Chicken Roast":"https://images.unsplash.com/photo-1625944232762-1c0b9d4e2a90",
+"Prawn Biryani":"https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec",
+"Egg Bhurji":"https://images.unsplash.com/photo-1617191517004-8c6d8e6e2b9a",
+"Chicken Manchurian":"https://images.unsplash.com/photo-1589308078056-fb1a4b1f4c3a",
+"Chicken Shawarma":"https://images.unsplash.com/photo-1601050690117-9c8e9b6a8a5a",
+"Grilled Chicken":"https://images.unsplash.com/photo-1605478909918-5d8b6f7d0e6a"
+};
+
+/* ------------------ MENU FUNCTION ------------------ */
+function showMenu() {
+    let type = document.getElementById("type").value;
+    let menu = document.getElementById("menu");
+    menu.innerHTML = "";
+
+    let items = (type === "veg") ? vegItems : nonVegItems;
+
+    for (let item in items) {
+        let option = document.createElement("option");
+        option.value = item;
+        option.text = item;
+        menu.appendChild(option);
+    }
+
+    menu.onchange = () => {
+    let img = document.getElementById("foodImg");
+    img.src = items[menu.value];
+    img.style.display = "block";   // show only after selection
+};
+
+    
+}
+</script>
+
+</body>
+</html>
