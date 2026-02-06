@@ -1,22 +1,101 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Donor Dashboard | AnnSeva</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Donor Dashboard - AnnSeva</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url("https://images.unsplash.com/photo-1504674900247-0877df9cc836") no-repeat center center/cover;
+        }
+
+        /* Dark overlay for readability */
+        .overlay {
+            background: rgba(0, 0, 0, 0.75);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: red;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: darkred;
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+            padding: 80px 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .add-btn {
+            background: #ff5e62;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #ff3b3f;
+        }
+
+    </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>🍱 Donor Dashboard</h1>
-    <p>Thank you for contributing to AnnSeva</p>
+<div class="overlay">
 
-    <a href="/add_food" class="btn">+ Add Food</a>
+    <!-- HEADER -->
+    <div class="header">
+        <h2>🍱 Donor Dashboard</h2>
+        <a href="/logout">
+            <button class="logout-btn">Logout</button>
+        </a>
+    </div>
 
-    <br><br>
-    <a href="/logout" class="btn" style="background:#2e7d32;">Logout</a>
+    <!-- CONTENT -->
+    <div class="container">
+        <h1>Welcome to AnnSeva</h1>
+        <p>Thank you for contributing to reducing food waste.</p>
+
+        <a href="/add_food">
+            <button class="add-btn">+ Add Food</button>
+        </a>
+    </div>
+
 </div>
-<body class="donor-bg">
-
 
 </body>
 </html>

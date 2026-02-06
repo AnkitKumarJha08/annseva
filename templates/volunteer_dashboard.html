@@ -1,41 +1,185 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Volunteer Dashboard | AnnSeva</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Volunteer Dashboard - AnnSeva</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url("https://images.unsplash.com/photo-1504674900247-0877df9cc836") no-repeat center center/cover;
+        }
+
+        /* Dark overlay */
+        .overlay {
+            background: rgba(0, 0, 0, 0.8);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            color: white;
+        }
+
+        .logout-btn {
+            background: red;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: darkred;
+        }
+
+        .container {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            width: 320px;
+            margin: 15px;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+
+        img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .accept {
+            background: green;
+            color: white;
+        }
+
+        .accept:hover {
+            background: darkgreen;
+        }
+
+        .collect {
+            background: orange;
+            color: white;
+        }
+
+        .collect:hover {
+            background: darkorange;
+        }
+
+        iframe {
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .timer {
+            font-weight: bold;
+            color: red;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                width: 95%;
+            }
+        }
+    </style>
 </head>
+<body>
 
-<body class="default-bg">
+<div class="overlay">
 
-<div class="card">
-    <h1>🤝 Volunteer Pickup Dashboard</h1>
+    <!-- HEADER -->
+    <div class="header">
+        <h2>🚚 Volunteer Pickup Dashboard</h2>
+        <a href="/logout">
+            <button class="logout-btn">Logout</button>
+        </a>
+    </div>
 
-    {% for post in posts %}
-    <div class="food-card">
+    <div class="container">
 
-        <div class="food-info">
-            <h2>{{ post.food_name }}</h2>
-            <p><b>Quantity:</b> {{ post.quantity }} plates</p>
+        {% if posts|length == 0 %}
+            <h3 style="color:white;">No pending pickups right now.</h3>
+        {% endif %}
+
+        {% for post in posts %}
+        <div class="card">
+
+            {% if post.image %}
+            <img src="{{ url_for('static', filename='uploads/' + post.image) }}">
+            {% endif %}
+
+            <h3>{{ post.food_name }}</h3>
+            <p><b>Type:</b> {{ post.food_type }}</p>
+            <p><b>Menu:</b> {{ post.menu_items }}</p>
+            <p><b>Quantity:</b> {{ post.quantity }}</p>
             <p><b>Location:</b> {{ post.location }}</p>
             <p><b>Status:</b> {{ post.status }}</p>
-        </div>
 
-        <div class="food-action">
-            <a href="{{ post.location }}" target="_blank" class="map-btn">📍 Map</a>
+            <!-- Google Map (FIXED inside loop) -->
+            <iframe
+                width="100%"
+                height="200"
+                style="border:0;"
+                loading="lazy"
+                allowfullscreen
+                src="https://www.google.com/maps?q={{ post.location }}&output=embed">
+            </iframe>
 
+            <!-- Countdown Timer -->
+            <p>Pickup Timer: <span class="timer" id="timer{{ post.id }}"></span></p>
+
+            <script>
+                var countdown{{ post.id }} = 1800; // 30 minutes
+
+                setInterval(function() {
+                    var minutes = Math.floor(countdown{{ post.id }} / 60);
+                    var seconds = countdown{{ post.id }} % 60;
+
+                    if (countdown{{ post.id }} > 0) {
+                        document.getElementById("timer{{ post.id }}").innerHTML =
+                            minutes + "m " + seconds + "s";
+                        countdown{{ post.id }}--;
+                    }
+                }, 1000);
+            </script>
+
+            <!-- Status Buttons -->
             {% if post.status == "Pending" %}
-                <a href="/accept/{{ post.id }}" class="accept-btn">✅ Accept</a>
-
+                <a href="/accept/{{ post.id }}">
+                    <button class="accept">Accept Pickup</button>
+                </a>
             {% elif post.status == "Accepted" %}
-                <a href="/collected/{{ post.id }}" class="collect-btn">📦 Collected</a>
-
-            {% else %}
-                <span class="done-label">✔ Completed</span>
+                <a href="/collected/{{ post.id }}">
+                    <button class="collect">Mark as Collected</button>
+                </a>
             {% endif %}
+
         </div>
+        {% endfor %}
 
     </div>
-    {% endfor %}
 
 </div>
 
